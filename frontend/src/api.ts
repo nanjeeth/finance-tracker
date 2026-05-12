@@ -56,4 +56,49 @@ export const api = {
     get: (month: string) =>
       request<MonthlySummary>(`/summary/?month=${month}`),
   },
+
+  import: {
+    preview: async (file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`${BASE}/import/preview`, {
+        method: "POST",
+        body: form,
+      });
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`${res.status}: ${body}`);
+      }
+      return res.json() as Promise<{
+        bank: string;
+        transactions: {
+          title: string;
+          amount: number;
+          type: string;
+          date: string;
+          suggested_category: string | null;
+          fingerprint: string;
+        }[];
+        total_parsed: number;
+        errors: string[];
+      }>;
+    },
+    confirm: (
+      transactions: {
+        title: string;
+        amount: number;
+        type: string;
+        date: string;
+        category_name: string | null;
+        fingerprint: string;
+      }[]
+    ) =>
+      request<{ imported: number; skipped: number; total: number }>(
+        "/import/confirm",
+        {
+          method: "POST",
+          body: JSON.stringify({ transactions }),
+        }
+      ),
+  },
 };

@@ -3,11 +3,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./components/Dashboard";
 import TransactionList from "./components/TransactionList";
 import CategoryManager from "./components/CategoryManager";
+import ImportCSV from "./components/ImportCSV";
 import "./App.css";
 
 const queryClient = new QueryClient();
 
-type Tab = "dashboard" | "transactions" | "categories";
+type Tab = "dashboard" | "transactions" | "categories" | "import";
 
 function currentMonth() {
   const d = new Date();
@@ -62,12 +63,19 @@ function App() {
         >
           Categories
         </button>
+        <button
+          className={tab === "import" ? "active" : ""}
+          onClick={() => setTab("import")}
+        >
+          Import
+        </button>
       </nav>
 
       <main className="app-main">
         {tab === "dashboard" && <Dashboard month={month} />}
         {tab === "transactions" && <TransactionList month={month} />}
         {tab === "categories" && <CategoryManager />}
+        {tab === "import" && <ImportCSV />}
       </main>
     </div>
   );
