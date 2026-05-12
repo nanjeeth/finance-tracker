@@ -396,6 +396,216 @@
   color: var(--text-muted);
 }
 
+/* ── Import CSV ─────────────────────────────────────────── */
+.import-csv h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-card);
+}
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-bg, rgba(99, 102, 241, 0.05));
+}
+.drop-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+.drop-text {
+  font-weight: 500;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+.drop-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.import-errors {
+  background: var(--red-bg);
+  border: 1px solid var(--red);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--red);
+}
+.import-errors p {
+  margin: 4px 0;
+}
+.import-result {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.result-icon {
+  font-size: 48px;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.import-result h4 {
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+.import-result p {
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+.import-preview {
+  margin-top: 16px;
+}
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.bank-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.bank-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.preview-count {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.source-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.source-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.source-filter input {
+  width: auto;
+}
+.source-name {
+  color: var(--text-heading);
+  font-weight: 500;
+}
+.source-count {
+  color: var(--text-muted);
+}
+.source-tag {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  padding: 0 6px;
+  border-radius: 8px;
+  color: var(--text-muted);
+}
+.preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: auto;
+}
+.select-all input {
+  width: auto;
+}
+.preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+.preview-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.preview-row input[type="checkbox"] {
+  width: auto;
+  flex-shrink: 0;
+}
+.preview-row.deselected {
+  opacity: 0.4;
+}
+.preview-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.preview-title {
+  font-weight: 500;
+  color: var(--text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+.preview-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.category-tag {
+  background: var(--accent-bg, rgba(99, 102, 241, 0.1));
+  color: var(--accent);
+  font-size: 11px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.preview-amount {
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.preview-amount.income {
+  color: var(--green);
+}
+.preview-amount.expense {
+  color: var(--red);
+}
+
 /* ── Utility ────────────────────────────────────────────── */
 .loading {
   text-align: center;
