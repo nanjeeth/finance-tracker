@@ -1,9 +1,9 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# SQLite file will be created in the backend folder automatically
-SQLALCHEMY_DATABASE_URL = "sqlite:///./finance.db"
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./finance.db")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
