@@ -83,6 +83,16 @@ export const api = {
         errors: string[];
       }>;
     },
+    uploads: () =>
+      request<
+        {
+          filename: string;
+          original_name: string;
+          uploaded_at: string;
+          size_kb: number;
+        }[]
+      >("/import/uploads"),
+    downloadUrl: (filename: string) => `${BASE}/import/uploads/${filename}`,
     confirm: (
       transactions: {
         title: string;

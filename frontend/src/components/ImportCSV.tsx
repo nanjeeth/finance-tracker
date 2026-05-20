@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 
 interface PreviewTx {
@@ -163,6 +163,7 @@ export default function ImportCSV() {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      refetchUploads();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Import failed";
       setErrors([msg]);
@@ -179,6 +180,11 @@ export default function ImportCSV() {
     setParseProgress({ done: 0, total: 0 });
     if (fileRef.current) fileRef.current.value = "";
   };
+
+  const { data: uploads = [], refetch: refetchUploads } = useQuery({
+    queryKey: ["uploads"],
+    queryFn: api.import.uploads,
+  });
 
   const selectedCount = preview.filter((tx) => tx.selected).length;
   const sources = [...new Set(preview.map((tx) => tx.source))];
@@ -336,6 +342,30 @@ export default function ImportCSV() {
                   {tx.type === "income" ? "+" : "-"}
                   {formatCurrency(tx.amount)}
                 </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {uploads.length > 0 && !preview.length && (
+        <div className="upload-history">
+          <h3>Upload History</h3>
+          <div className="upload-list">
+            {uploads.map((u) => (
+              <div key={u.filename} className="upload-item">
+                <div className="upload-info">
+                  <span className="upload-name">{u.original_name}</span>
+                  <span className="upload-meta">
+                    {u.uploaded_at} &middot; {u.size_kb} KB
+                  </span>
+                </div>
+                <a
+                  className="btn-secondary"
+                  href={api.import.downloadUrl(u.filename)}
+                  download
+                >
+                  Download
+                </a>
               </div>
             ))}
           </div>
