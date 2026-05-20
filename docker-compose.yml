@@ -4,8 +4,10 @@ services:
     restart: unless-stopped
     volumes:
       - db-data:/app/data
+      - uploads:/app/uploads
     environment:
       - DATABASE_URL=sqlite:///./data/finance.db
+      - UPLOADS_DIR=/app/uploads
     expose:
       - "8000"
 
@@ -19,3 +21,4 @@ services:
 
 volumes:
   db-data:
+  uploads:

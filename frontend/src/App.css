@@ -606,6 +606,49 @@
   color: var(--red);
 }
 
+/* ── Upload history ─────────────────────────────────────── */
+.upload-history {
+  margin-top: 32px;
+}
+.upload-history h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.upload-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.upload-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow);
+}
+.upload-info {
+  display: flex;
+  flex-direction: column;
+}
+.upload-name {
+  font-weight: 500;
+  color: var(--text-heading);
+  font-size: 14px;
+}
+.upload-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.upload-item .btn-secondary {
+  font-size: 13px;
+  padding: 4px 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
 /* ── Utility ────────────────────────────────────────────── */
 .loading {
   text-align: center;
