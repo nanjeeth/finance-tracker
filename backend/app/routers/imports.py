@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models
 from app.csv_parser import parse_csv
+from app.pdf_parser import parse_pdf
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ UPLOADS_DIR = Path(os.getenv("UPLOADS_DIR", "./uploads"))
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def save_upload(filename: str, content: str) -> str:
+def save_upload_text(filename: str, content: str) -> str:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name = "".join(c if c.isalnum() or c in ".-_" else "_" for c in filename)
     saved_name = f"{timestamp}_{safe_name}"
@@ -22,20 +23,37 @@ def save_upload(filename: str, content: str) -> str:
     return saved_name
 
 
+def save_upload_bytes(filename: str, content: bytes) -> str:
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_name = "".join(c if c.isalnum() or c in ".-_" else "_" for c in filename)
+    saved_name = f"{timestamp}_{safe_name}"
+    (UPLOADS_DIR / saved_name).write_bytes(content)
+    return saved_name
+
+
 @router.post("/preview")
-async def preview_csv(file: UploadFile = File(...)):
-    if not file.filename or not file.filename.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Only CSV files are supported")
+async def preview_file(file: UploadFile = File(...)):
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="No file provided")
 
-    content = (await file.read()).decode("utf-8-sig")
-    result = parse_csv(content)
+    filename_lower = file.filename.lower()
+    raw = await file.read()
 
-    if result.get("error"):
-        raise HTTPException(status_code=400, detail=result["error"])
+    if filename_lower.endswith(".csv"):
+        content = raw.decode("utf-8-sig")
+        result = parse_csv(content)
+        if result.get("error"):
+            raise HTTPException(status_code=400, detail=result["error"])
+        saved_name = save_upload_text(file.filename, content)
+    elif filename_lower.endswith(".pdf"):
+        result = parse_pdf(raw)
+        if result.get("error"):
+            raise HTTPException(status_code=400, detail=result["error"])
+        saved_name = save_upload_bytes(file.filename, raw)
+    else:
+        raise HTTPException(status_code=400, detail="Only CSV and PDF files are supported")
 
-    saved_name = save_upload(file.filename, content)
     result["saved_file"] = saved_name
-
     return result
 
 
@@ -94,16 +112,22 @@ def confirm_import(
 
 @router.get("/uploads")
 def list_uploads():
-    files = sorted(UPLOADS_DIR.glob("*.csv"), reverse=True)
-    return [
-        {
+    files = []
+    for ext in ("*.csv", "*.pdf"):
+        files.extend(UPLOADS_DIR.glob(ext))
+    files.sort(key=lambda f: f.name, reverse=True)
+
+    result = []
+    for f in files:
+        suffix = f.suffix
+        original = "_".join(f.stem.split("_")[2:]) + suffix
+        result.append({
             "filename": f.name,
-            "original_name": "_".join(f.stem.split("_")[2:]) + ".csv",
+            "original_name": original,
             "uploaded_at": f.stem[:15].replace("_", " ").strip(),
             "size_kb": round(f.stat().st_size / 1024, 1),
-        }
-        for f in files
-    ]
+        })
+    return result
 
 
 @router.get("/uploads/{filename}")
@@ -111,4 +135,5 @@ def download_upload(filename: str):
     filepath = UPLOADS_DIR / filename
     if not filepath.exists() or not filepath.is_relative_to(UPLOADS_DIR):
         raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(filepath, filename=filename, media_type="text/csv")
+    media_type = "application/pdf" if filename.endswith(".pdf") else "text/csv"
+    return FileResponse(filepath, filename=filename, media_type=media_type)
