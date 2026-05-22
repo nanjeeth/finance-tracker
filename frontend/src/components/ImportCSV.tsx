@@ -36,9 +36,11 @@ export default function ImportCSV() {
   } | null>(null);
 
   const handleFiles = useCallback(async (files: File[]) => {
-    const csvFiles = files.filter((f) => f.name.endsWith(".csv"));
-    if (csvFiles.length === 0) {
-      setErrors(["No CSV files found. Please upload .csv files."]);
+    const supported = files.filter(
+      (f) => f.name.endsWith(".csv") || f.name.endsWith(".pdf")
+    );
+    if (supported.length === 0) {
+      setErrors(["No supported files found. Please upload .csv or .pdf files."]);
       return;
     }
 
@@ -47,15 +49,15 @@ export default function ImportCSV() {
     setErrors([]);
     setPreview([]);
     setBanks([]);
-    setParseProgress({ done: 0, total: csvFiles.length });
+    setParseProgress({ done: 0, total: supported.length });
 
     const allTransactions: PreviewTx[] = [];
     const allErrors: string[] = [];
     const detectedBanks: string[] = [];
 
-    for (let i = 0; i < csvFiles.length; i++) {
-      const file = csvFiles[i];
-      setParseProgress({ done: i, total: csvFiles.length });
+    for (let i = 0; i < supported.length; i++) {
+      const file = supported[i];
+      setParseProgress({ done: i, total: supported.length });
 
       try {
         const data = await api.import.preview(file);
@@ -103,7 +105,7 @@ export default function ImportCSV() {
     setBanks(detectedBanks);
     setPreview(deduplicated);
     setErrors(allErrors);
-    setParseProgress({ done: csvFiles.length, total: csvFiles.length });
+    setParseProgress({ done: supported.length, total: supported.length });
     setLoading(false);
   }, []);
 
@@ -207,7 +209,7 @@ export default function ImportCSV() {
           >
             <div className="drop-icon">&#128196;</div>
             <p className="drop-text">
-              Drag & drop your CSV files here, or click to browse
+              Drag & drop your CSV or PDF files here, or click to browse
             </p>
             <p className="drop-hint">
               Upload multiple files at once — supports Chase, Bank of America, Amex, Capital One, Citi, Discover, Wells Fargo, Apple Card
@@ -215,7 +217,7 @@ export default function ImportCSV() {
             <input
               ref={fileRef}
               type="file"
-              accept=".csv"
+              accept=".csv,.pdf"
               multiple
               onChange={onFileSelect}
               hidden
